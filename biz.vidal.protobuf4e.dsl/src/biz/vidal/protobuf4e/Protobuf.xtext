@@ -1,0 +1,10 @@
+grammar biz.vidal.protobuf4e.Protobuf with org.eclipse.xtext.common.Terminals
+
+generate protobuf "http://www.vidal.biz/protobuf4e/Protobuf"
+
+Proto:
+	'package' name=FQN
+	;
+
+FQN:
+	ID ('.' ID)*;
