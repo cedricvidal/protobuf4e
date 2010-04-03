@@ -5,11 +5,13 @@ generate protobuf "http://www.vidal.biz/protobuf4e/Protobuf"
 Proto:
 	'package' name=FQN ';'
 	(options+=Option)*
-	(types+=Type)*
+	(elements+=ProtoElement)*
 	;
 
 FQN:
 	ID ('.' ID)*;
+
+ProtoElement: Type | ExtendMessage;
 
 Type:
 	Message | Enum;
@@ -19,6 +21,12 @@ Option :
 
 Message :
 	'message' name=ID '{'
+		elements+=MessageElement*
+		('extensions' extensionsFrom=INT 'to' (extensionsTo=INT | 'max') ';')?
+	'}';
+
+ExtendMessage :
+	'extend' message=[Message] '{'
 		elements+=MessageElement*
 	'}';
 
