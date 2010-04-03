@@ -3,8 +3,52 @@ grammar biz.vidal.protobuf4e.Protobuf with org.eclipse.xtext.common.Terminals
 generate protobuf "http://www.vidal.biz/protobuf4e/Protobuf"
 
 Proto:
-	'package' name=FQN
+	'package' name=FQN ';'
+	(options+=Option)*
+	(types+=Type)*
 	;
 
 FQN:
 	ID ('.' ID)*;
+
+Type:
+	Message | Enum;
+
+Option :
+	'option' name=ID '=' value=STRING ';';
+
+Message :
+	'message' name=ID '{'
+		elements+=MessageElement*
+	'}';
+
+MessageElement: Type | Property;
+
+Enum :
+	'enum' name=ID '{'
+		literals+=Literal*
+	'}';
+
+Literal:
+	name=ID '=' index=INT ';';
+
+Property:
+	modifier=Modifier type=AbstractTypeReference name=ID '=' index=INT ('[' 'default' '=' default=[Literal] ']')? ';';
+
+AbstractTypeReference : ScalarTypeReference | TypeReference;
+ScalarTypeReference : scalar = ScalarType;
+TypeReference : type = [Type];
+
+enum Modifier : required
+	| optional
+	| repeated
+	;
+
+enum ScalarType : double
+	| float
+	| int32
+	| int64
+	| uint32
+	| uint64
+	| string
+	;
