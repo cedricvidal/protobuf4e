@@ -15,7 +15,7 @@ Type:
 	Message | Enum;
 
 Option :
-	'option' name=ID '=' value=STRING ';';
+	'option' name=ID '=' value=(ID|STRING) ';';
 
 Message :
 	'message' name=ID '{'
@@ -27,13 +27,27 @@ MessageElement: Type | Property;
 Enum :
 	'enum' name=ID '{'
 		literals+=Literal*
-	'}';
+	'}' ';'?;
 
 Literal:
 	name=ID '=' index=INT ';';
 
 Property:
-	modifier=Modifier type=AbstractTypeReference name=ID '=' index=INT ('[' 'default' '=' default=[Literal] ']')? ';';
+	modifier=Modifier type=AbstractTypeReference name=(ID|'package') '=' index=INT ('[' 'default' '=' default=ValueRef ']')? ';';
+
+ValueRef : LiteralRef
+	| BooleanRef
+	| IntRef
+	;
+
+LiteralRef:
+	literal = [Literal];
+
+BooleanRef:
+	boolean = BOOL;
+
+IntRef:
+	int = INT;
 
 AbstractTypeReference : ScalarTypeReference | TypeReference;
 ScalarTypeReference : scalar = ScalarType;
@@ -50,5 +64,17 @@ enum ScalarType : double
 	| int64
 	| uint32
 	| uint64
+	| sint32
+	| sint64
+	| fixed32
+	| fixed64
+	| sfixed32
+	| sfixed64
+	| bool
 	| string
+	| bytes
+	;
+
+enum BOOL: true
+	| false
 	;
